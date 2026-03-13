@@ -99,9 +99,9 @@ def fig_probability_vessels():
     ax.axis("off")
 
     # Title
-    ax.text(5, 7.5, "THE PROBABILITY CONSTRAINT",
+    ax.text(5, 7.5, "Probability Constraint: Three Outcomes Sum to 100%",
             ha="center", va="center", fontsize=18, fontweight="bold", color=TEXT)
-    ax.text(5, 7.0, "Three outcomes must always sum to 100%",
+    ax.text(5, 7.0, "Home regulation + Draw (OT/SO) + Away regulation",
             ha="center", va="center", fontsize=12, color=TEXT_MUTED)
 
     # Three vessels (bars showing actual vs market)
@@ -116,15 +116,18 @@ def fig_probability_vessels():
         bar_h = mkt / 10
         ax.add_patch(plt.Rectangle((xp - 0.6, 1.5), 1.2, bar_h,
                                    facecolor=col, alpha=0.15, edgecolor=col, linewidth=1.5))
-        ax.text(xp, 1.5 + bar_h + 0.15, f"Market: {mkt:.1f}%",
-                ha="center", fontsize=9, color=TEXT_MUTED)
 
         # Actual bar (overlay)
         bar_h_act = act / 10
         ax.add_patch(plt.Rectangle((xp - 0.4, 1.5), 0.8, bar_h_act,
                                    facecolor=col, alpha=0.6, edgecolor="none"))
-        ax.text(xp, 1.5 + bar_h_act + 0.15, f"Actual: {act:.1f}%",
+
+        # Labels: stack Actual on top, Market below, with enough gap
+        top = max(bar_h, bar_h_act)
+        ax.text(xp, 1.5 + top + 0.55, f"Actual: {act:.1f}%",
                 ha="center", fontsize=10, fontweight="bold", color=col)
+        ax.text(xp, 1.5 + top + 0.15, f"Market: {mkt:.1f}%",
+                ha="center", fontsize=9, color=TEXT_MUTED)
 
         # Label
         ax.text(xp, 1.0, lbl, ha="center", fontsize=13, fontweight="bold", color=col)
@@ -139,7 +142,7 @@ def fig_probability_vessels():
     ax.text(5, 0.3, "Home + Draw + Away = 100%   (always)",
             ha="center", fontsize=11, color=TEXT_MUTED, style="italic")
 
-    save(fig, "probability_vessels.png")
+    save(fig, "fig01_probability_vessels.png")
 
 fig_probability_vessels()
 
@@ -167,7 +170,7 @@ def fig_market_vs_actual():
     ax.set_xticklabels(categories, fontsize=12)
     ax.set_ylim(0, 50)
     ax.legend(fontsize=11)
-    ax.set_title("THE MISPRICING GAP\nActual vs. Market vs. Model Probability Distribution",
+    ax.set_title("Mispricing Gap: Actual vs. Market vs. Model",
                  fontsize=14, fontweight="bold", pad=15)
 
     # Value labels
@@ -178,7 +181,7 @@ def fig_market_vs_actual():
                     ha="center", fontsize=9, color=TEXT_MUTED)
 
     ax.grid(axis="y", alpha=0.3)
-    save(fig, "market_vs_actual_vs_model.png")
+    save(fig, "fig02_market_vs_actual_vs_model.png")
 
 fig_market_vs_actual()
 
@@ -215,11 +218,11 @@ def fig_monthly_distribution():
     ax.set_ylabel("Share of Outcomes (%)", fontsize=11)
     ax.set_ylim(0, 100)
     ax.legend(loc="upper left", fontsize=10)
-    ax.set_title("MONTHLY PROBABILITY REDISTRIBUTION\nWatch How Probability Mass Flows Between Outcomes",
+    ax.set_title("Monthly 3-Way Outcome Distribution",
                  fontsize=14, fontweight="bold", pad=15)
     ax.grid(axis="y", alpha=0.2)
 
-    save(fig, "monthly_3way_distribution.png")
+    save(fig, "fig03_monthly_3way_distribution.png")
 
 fig_monthly_distribution()
 
@@ -233,9 +236,9 @@ def fig_probability_flow():
     ax.set_ylim(0, 6)
     ax.axis("off")
 
-    ax.text(5, 5.5, "WHERE THE PROBABILITY MASS GOES",
+    ax.text(5, 5.5, "Probability Mass Flow: 2024-25 to 2025-26",
             ha="center", fontsize=16, fontweight="bold", color=TEXT)
-    ax.text(5, 5.0, "Season-over-season shift: 2024-25 → 2025-26",
+    ax.text(5, 5.0, "Season-over-season redistribution among three outcomes",
             ha="center", fontsize=11, color=TEXT_MUTED)
 
     # Three boxes
@@ -261,10 +264,10 @@ def fig_probability_flow():
     # Market response
     ax.text(5, 0.8, "Market adjusted draw pricing by only 0.65pp", ha="center",
             fontsize=11, color=RED, fontweight="bold")
-    ax.text(5, 0.3, "Reality moved 5.16pp. The market missed 87% of the shift.",
+    ax.text(5, 0.3, "Actual shift: 5.16pp. Market repricing captured 13% of the move.",
             ha="center", fontsize=10, color=TEXT_MUTED)
 
-    save(fig, "probability_flow_sankey.png")
+    save(fig, "fig04_probability_flow.png")
 
 fig_probability_flow()
 
@@ -289,7 +292,7 @@ def fig_tie_inflation():
     ax.set_xticks(x)
     ax.set_xticklabels(monthly_ti.index.astype(str), rotation=45, ha="right", fontsize=9)
     ax.set_ylabel("Tie Inflation Multiplier", fontsize=11)
-    ax.set_title("TIE INFLATION: THE MODEL ADAPTS\nBayesian calibration tracks the shifting OT rate",
+    ax.set_title("Tie Inflation: Bayesian Calibration Over Time",
                  fontsize=14, fontweight="bold", pad=15)
     ax.legend(fontsize=10)
     ax.grid(alpha=0.3)
@@ -301,7 +304,7 @@ def fig_tie_inflation():
             ax.text(i, ax.get_ylim()[1], " 2025-26 →", fontsize=9, color=PINK, va="top")
             break
 
-    save(fig, "tie_inflation_timeline.png")
+    save(fig, "fig05_tie_inflation.png")
 
 fig_tie_inflation()
 
@@ -332,12 +335,12 @@ def fig_bookmaker_pricing():
                 va="center", fontsize=9, color=AMBER if edge > 0.005 else TEXT_MUTED)
 
     ax.set_xlabel("Fair Implied Draw Probability (%)", fontsize=11)
-    ax.set_title("BOOKMAKER DRAW PRICING\nHow different books price the same outcome",
+    ax.set_title("Bookmaker Draw Pricing Comparison",
                  fontsize=14, fontweight="bold", pad=15)
     ax.legend(fontsize=10, loc="lower right")
     ax.grid(axis="x", alpha=0.3)
 
-    save(fig, "bookmaker_draw_pricing.png")
+    save(fig, "fig06_bookmaker_draw_pricing.png")
 
 fig_bookmaker_pricing()
 
@@ -373,12 +376,12 @@ def fig_rolling_draw_rate():
 
     ax.set_ylabel("Draw / OT Rate (%)", fontsize=11)
     ax.set_ylim(10, 38)
-    ax.set_title("THE MARKET CAN'T KEEP UP\nActual draw rate swings wildly while market pricing barely moves",
+    ax.set_title("Rolling Draw Rate vs. Market Implied Pricing",
                  fontsize=14, fontweight="bold", pad=15)
     ax.legend(fontsize=10)
     ax.grid(alpha=0.3)
 
-    save(fig, "rolling_draw_rate_vs_market.png")
+    save(fig, "fig07_rolling_draw_rate_vs_market.png")
 
 fig_rolling_draw_rate()
 
@@ -430,12 +433,12 @@ def fig_equity_curve():
     ax.axhline(0, color=TEXT_MUTED, linewidth=0.8)
 
     ax.set_ylabel("Cumulative Flat-Bet Profit (units)", fontsize=11)
-    ax.set_title("EQUITY CURVE: DRAW vs HOME BETS\nTwo independent profit streams from the same probability redistribution",
+    ax.set_title("Equity Curve: Draw and Home Bet Components",
                  fontsize=14, fontweight="bold", pad=15)
     ax.legend(fontsize=11, loc="upper left")
     ax.grid(alpha=0.3)
 
-    save(fig, "equity_curve.png")
+    save(fig, "fig08_equity_curve.png")
 
 fig_equity_curve()
 
@@ -468,7 +471,7 @@ def fig_momentum_acceleration():
                      alpha=0.15, color=RED, label="Below average")
     ax1.set_ylabel("14-Day Rolling Draw Rate (%)", fontsize=11)
     ax1.legend(fontsize=9)
-    ax1.set_title("MOMENTUM & ACCELERATION\nTracking the probability redistribution wave",
+    ax1.set_title("Momentum and Acceleration Signals",
                   fontsize=14, fontweight="bold", pad=15)
     ax1.grid(alpha=0.3)
 
@@ -485,7 +488,7 @@ def fig_momentum_acceleration():
     ax2.legend(fontsize=9, loc="lower left")
     ax2.grid(alpha=0.3)
 
-    save(fig, "momentum_acceleration.png")
+    save(fig, "fig09_momentum_acceleration.png")
 
 fig_momentum_acceleration()
 
@@ -523,11 +526,11 @@ def fig_roi_by_edge():
     ax.axhline(0, color=TEXT_MUTED, linewidth=0.8)
     ax.set_ylabel("Flat Bet ROI (%)", fontsize=11)
     ax.set_xlabel("Model Edge Bucket", fontsize=11)
-    ax.set_title("ROI INCREASES WITH EDGE SIZE\nThe model's edge estimates are real — larger edges produce larger returns",
+    ax.set_title("ROI by Model Edge Size",
                  fontsize=14, fontweight="bold", pad=15)
     ax.grid(axis="y", alpha=0.3)
 
-    save(fig, "roi_by_edge_bucket.png")
+    save(fig, "fig10_roi_by_edge_bucket.png")
 
 fig_roi_by_edge()
 
@@ -560,7 +563,7 @@ def fig_seasonal_shift():
     ax1.set_yticks([0, 1])
     ax1.set_yticklabels(list(seasons.keys()), fontsize=12)
     ax1.set_xlabel("Outcome Share (%)", fontsize=11)
-    ax1.set_title("ACTUAL OUTCOME SPLIT", fontsize=13, fontweight="bold")
+    ax1.set_title("Actual Outcome Split", fontsize=13, fontweight="bold")
     ax1.grid(axis="x", alpha=0.3)
 
     # Right: Market pricing barely moved
@@ -579,7 +582,7 @@ def fig_seasonal_shift():
     ax2.set_xticks(x)
     ax2.set_xticklabels(["2024-25", "2025-26"], fontsize=12)
     ax2.set_ylabel("Market Fair Implied (%)", fontsize=11)
-    ax2.set_title("MARKET PRICING (BARELY MOVED)", fontsize=13, fontweight="bold")
+    ax2.set_title("Market Implied Pricing by Season", fontsize=13, fontweight="bold")
     ax2.set_ylim(15, 50)
     ax2.legend(fontsize=9)
     ax2.grid(axis="y", alpha=0.3)
@@ -592,10 +595,10 @@ def fig_seasonal_shift():
                  fontsize=9, color=AMBER, fontweight="bold",
                  arrowprops=dict(arrowstyle="->", color=AMBER))
 
-    fig.suptitle("THE SEASONAL SHIFT\nReality moved 5.2pp. The market moved 0.7pp.",
+    fig.suptitle("Season-Over-Season Distribution Shift",
                  fontsize=15, fontweight="bold", y=1.02)
     fig.tight_layout()
-    save(fig, "seasonal_shift.png")
+    save(fig, "fig11_seasonal_shift.png")
 
 fig_seasonal_shift()
 
@@ -631,12 +634,12 @@ def fig_bookmaker_edge_distribution():
     ax.set_xticks(positions)
     ax.set_xticklabels(labels, rotation=45, ha="right", fontsize=9)
     ax.set_ylabel("Draw Edge (%)", fontsize=11)
-    ax.set_title("EDGE DISTRIBUTION BY BOOKMAKER\nSame game, different prices — book shopping matters",
+    ax.set_title("Draw Edge Distribution by Bookmaker",
                  fontsize=14, fontweight="bold", pad=15)
     ax.legend(fontsize=10)
     ax.grid(axis="y", alpha=0.3)
 
-    save(fig, "bookmaker_edge_distribution.png")
+    save(fig, "fig12_bookmaker_edge_distribution.png")
 
 fig_bookmaker_edge_distribution()
 
