@@ -142,6 +142,17 @@ The validation paper. First-month out-of-sample results: 143 games, 137 draw bet
 
 ---
 
+## Setup
+
+```bash
+pip install -r requirements.txt
+python results_dashboard.py   # → http://127.0.0.1:8060
+```
+
+**Note on paths**: The pipeline scripts (`scrapers/`, `features/`, `models/`, `predict_today.py`, etc.) use `PROJECT_DIR` from `config.py`, which is set to a local Windows path. If you want to run the full pipeline, update `PROJECT_DIR` in `config.py` to point to your local clone. The results dashboard (`results_dashboard.py`) uses relative paths and runs out of the box without any configuration.
+
+---
+
 ## Disclaimer
 
 This project is presented for analytical and portfolio purposes. Sports betting involves financial risk. Documented performance — whether from a backtest or live deployment — does not guarantee future results. The edge quantified here depends on market conditions, bookmaker pricing behavior, and the NHL's current overtime rate, all of which are subject to change.
