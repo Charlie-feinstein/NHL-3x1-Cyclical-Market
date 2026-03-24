@@ -550,34 +550,6 @@ Draw stake: min(0.037 × 25, 1.5) = 0.925 units at decimal 4.700.
 
 ---
 
-## 11. Limitations & Future Work
-
-### Disabled Components
-
-Several model components were implemented, tested, and deliberately disabled because they hurt or failed to help performance:
-
-- **Scoring anchor** (`ANCHOR_STRENGTH = 0.0`): The model's lambda bias is only +0.014. The anchor adds noise without improving accuracy.
-- **OT model blend** (`OT_BLEND_WEIGHT = 0.0`): A separate OT prediction model was built but a constant 0.518 home OT win probability outperforms the model's predictions. The constant is used.
-- **Conformal calibration**: Removed from the training pipeline. The raw model is well-calibrated, and the conformal holdout data is better used for training.
-- **Platt scaling on win probabilities** (`PLATT_ENABLED = False`): Implemented but disabled. The home-ice logit shift provides the same correction with fewer parameters.
-- **Lambda calibration** (`LAMBDA_CAL_ENABLED = False`): A multiplicative per-game lambda correction was tested and disabled.
-
-### Known Limitations
-
-- **Bivariate correlation**: ρ is estimated and used (typically 0.02-0.05) but its effect on final probabilities is small. The independent Poisson (ρ = 0) produces nearly identical results.
-- **No in-season retraining**: Models are trained at season cutoffs and not updated. A team that undergoes a major trade-deadline transformation in February is still being evaluated with October-trained weights.
-- **Goalie injury uncertainty**: The model requires a confirmed starter. If the starter is announced after the features are computed, the model uses a default (team average) goalie quality.
-- **Away bets not exploited**: The model identifies positive away edges (mirror of draw underpricing) but does not bet them. This is conservative — the away edge is correlated with the draw edge, so betting both would introduce correlation risk.
-
-### Future Work
-
-- **In-season model updates**: Retrain the regulation model monthly or after major roster changes.
-- **Live line movement**: Track odds changes from open to close to identify sharp money patterns.
-- **Player-level features**: Individual skater impacts (injuries, line combinations) beyond the goalie deployment model.
-- **Expanded markets**: Apply the same framework to other 3-way markets (e.g., soccer) where the draw is also structurally underpriced.
-
----
-
 ## References
 
 1. NHL API documentation: `api-web.nhle.com`
