@@ -363,7 +363,7 @@ The home side exists as a drawdown buffer. Because draw rate and home win rate a
 
 ### Backtest Results: 1,593 Games
 
-I ran a strict walk-forward backtest covering 14 months of NHL action (January 2025 through March 2026). The first three months of the 2024-25 season are excluded because the model's Bayesian priors need time to calibrate, and including the burn-in period would muddy the results. Walk-forward means the model only uses data available at the time of each prediction — no peeking at future information. Every bet the model identifies is graded against the actual game result.
+I ran a strict walk-forward backtest covering 14 months of NHL action (January 2025 through March 2026). The first three months of the 2024-25 season are excluded because the model's Bayesian priors need time to calibrate, and including the burn-in period would muddy the results. Walk-forward means the model only uses data available at the time of each prediction, with no peeking at future information. Every bet the model identifies is graded against the actual game result.
 
 The backtest evaluates each game's draw edge across 7 bookmakers (6,410 game-book combinations total). In practice, a bettor shops for the best available odds, so the stats below reflect best-book selection, one bet per game at the highest-edge bookmaker.
 

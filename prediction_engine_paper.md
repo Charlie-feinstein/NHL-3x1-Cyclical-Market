@@ -51,7 +51,7 @@ A final edge engine compares model probabilities to devigged market probabilitie
 
 **Goalie stats**: Per-game boxscores (saves, goals against, shots faced, time on ice) plus season-rolling metrics: GSAx (goals saved above expected), save percentage, and high-danger save percentage. All computed with `shift(1)` to prevent leakage.
 
-**Confirmed starters** (Daily Faceoff): Scraped daily to identify which goalie starts each game. Critical for the goalie deployment model — a backup goalie starting has a measurable effect on goals against.
+**Confirmed starters** (Daily Faceoff): Scraped daily to identify which goalie starts each game. Critical for the goalie deployment model: a backup goalie starting has a measurable effect on goals against.
 
 **3-way odds** (The Odds API): Home regulation win, draw, and away regulation win odds from 10+ US sportsbooks in decimal format. The `h2h_3_way` market key specifically targets regulation-time outcomes. Odds are filtered to exclude in-play lines (home or away decimal < 1.10, or draw decimal > 15.0).
 
@@ -69,7 +69,7 @@ A final edge engine compares model probabilities to devigged market probabilitie
 
 ### Temporal Integrity
 
-Every feature uses `shift(1)` — the rolling average for game *n* is computed from games *1* through *n-1* only. Season-level aggregations (EWM) reset at season boundaries because rosters change. The walk-forward backtest enforces strict temporal separation: models trained on `[start, cutoff)` are tested on `[cutoff, next_cutoff)`, with no information from the test period leaking into training, feature computation, or calibration.
+Every feature uses `shift(1)`: the rolling average for game *n* is computed from games *1* through *n-1* only. Season-level aggregations (EWM) reset at season boundaries because rosters change. The walk-forward backtest enforces strict temporal separation: models trained on `[start, cutoff)` are tested on `[cutoff, next_cutoff)`, with no information from the test period leaking into training, feature computation, or calibration.
 
 ---
 
@@ -89,7 +89,7 @@ Class imbalance: ~9:1 ratio of non-goals to goals. Handled via `scale_pos_weight
 
 ### Features
 
-The model uses 12 features, all derived from shot geometry and game state. No shooter or goalie identity is included — this is a pure shot quality model.
+The model uses 12 features, all derived from shot geometry and game state. No shooter or goalie identity is included; this is a pure shot quality model.
 
 | # | Feature | Description |
 |---|---------|-------------|
@@ -307,7 +307,7 @@ The correlation parameter ρ is estimated from historical data via method of mom
 
 **ρ = Cov(X_h, X_a) / mean(min(λ_h, λ_a))**
 
-clipped to [0, 0.15]. Hockey games have a small but real positive correlation — high-event games tend to produce more goals for both teams.
+clipped to [0, 0.15]. Hockey games have a small but real positive correlation; high-event games tend to produce more goals for both teams.
 
 From the 13×13 joint PMF grid:
 
@@ -391,9 +391,9 @@ The model uses a blend strategy with independent thresholds for draw and home be
 |------|----------|---------------|-----|
 | **Draw** | ≥ 2.5% | edge × 25 | 1.5 units |
 | **Home** | 2.5% - 5.0% | edge × 20 | 1.0 units |
-| **Away** | Not bet | — | — |
+| **Away** | Not bet | N/A | N/A |
 
-Away regulation bets are not taken because the model's edge on away wins is a mirror of draw underpricing — when draws are underpriced, the away win is typically overpriced by a similar amount, making away bets negative-EV after vig.
+Away regulation bets are not taken because the model's edge on away wins is a mirror of draw underpricing: when draws are underpriced, the away win is typically overpriced by a similar amount, making away bets negative-EV after vig.
 
 The draw stake multiplier (25×) is aggressive by Kelly criterion standards but reflects the structural nature of the edge: this is not a noisy signal that could flip sign, but a persistent structural mispricing with a well-estimated magnitude.
 
@@ -411,7 +411,7 @@ The backtest enforces strict temporal separation at every level:
 
 2. **Feature computation**: All rolling features (EWM, rolling windows) use `shift(1)`. No game's own outcome appears in its features.
 
-3. **Calibration parameters**: Bivariate ρ and home-ice shift are computed from pre-cutoff data only (fixed for the test season). Tie inflation uses the Bayesian update with pre-cutoff prior + season-to-date evidence — the same per-date loop that would run in live deployment.
+3. **Calibration parameters**: Bivariate ρ and home-ice shift are computed from pre-cutoff data only (fixed for the test season). Tie inflation uses the Bayesian update with pre-cutoff prior + season-to-date evidence, the same per-date loop that would run in live deployment.
 
 4. **Per-date loop**: For each test date, the model recomputes:
    - Scoring anchors (60-day lookback of completed games, currently disabled)
@@ -433,7 +433,7 @@ The xG model is static (trained once). The goalie model and regulation model are
 The regulation model's predicted λ (expected goals) is evaluated against actual regulation goals:
 
 - **Mean lambda bias**: +0.014 (model predicts 0.014 more goals than actually scored, on average)
-- This is negligible — less than 0.5% of the mean goal count (~2.8 per team per game)
+- This is negligible, less than 0.5% of the mean goal count (~2.8 per team per game)
 - The near-zero bias is why the scoring anchor and conformal calibration are disabled: they add noise without improving accuracy
 
 ### Probability Calibration
@@ -449,7 +449,7 @@ The Bayesian tie inflation factor adapts as the season progresses:
 | 2024-25 | ~1.31x | ~1.31x | ~1.31x | 22.3% |
 | 2025-26 | ~1.31x | ~1.37x | ~1.40x | 25.8% |
 
-The 2025-26 season's higher OT rate is a regime change — more parity means more close games reaching overtime. The Bayesian update detects this shift and inflates the tie probability accordingly, without overreacting to small samples early in the season.
+The 2025-26 season's higher OT rate is a regime change: more parity means more close games reaching overtime. The Bayesian update detects this shift and inflates the tie probability accordingly, without overreacting to small samples early in the season.
 
 ### Backtest Performance
 
