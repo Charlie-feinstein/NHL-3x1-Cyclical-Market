@@ -1,4 +1,4 @@
-# NHL 3-Way Regulation Market — Draw Edge Model
+# NHL 3-Way Regulation Market: Draw Edge Model
 
 **+19.1% live ROI across 137 bets · +8.1% backtest ROI across 1,593 games · March 2026**
 
@@ -8,7 +8,7 @@ A full-stack quantitative sports betting system that identifies and exploits str
 
 ## The Core Idea
 
-In a 3-way betting market, probabilities must sum to 100%. When bookmakers misprice one outcome, the error is absorbed by the others — and the draw is the one nobody is correcting. Recreational bettors pick teams. Sharp money flows into home and away. The draw sits neglected, underpriced by 1-4 percentage points on every game, on every book, every night.
+In a 3-way betting market, probabilities must sum to 100%. When bookmakers misprice one outcome, the error is absorbed by the others, and the draw is the one nobody is correcting. Recreational bettors pick teams. Sharp money flows into home and away. The draw sits neglected, underpriced by 1-4 percentage points on every game, on every book, every night.
 
 This project quantifies that mispricing, builds a model that prices draws more accurately than the market, and deploys it live against 20+ bookmakers simultaneously.
 
@@ -18,11 +18,11 @@ This project quantifies that mispricing, builds a model that prices draws more a
 
 ### Backtest (Walk-Forward, 1,593 Games)
 
-| Season | Games | ROI | Profit |
-|--------|-------|-----|--------|
-| 2024-25 OOS | ~800 | +6.8% | — |
-| 2025-26 OOS | ~800 | +9.3% | — |
-| **Combined** | **1,593** | **+8.1%** | **+12.5 units** |
+| Season | Games | ROI |
+|--------|-------|-----|
+| 2024-25 OOS | ~800 | +6.8% |
+| 2025-26 OOS | ~800 | +9.3% |
+| **Combined** | **1,593** | **+8.1%** |
 
 Strict temporal separation: models trained on data before each season's cutoff, tested on games after. No lookahead in features, calibration, or staking.
 
@@ -60,21 +60,21 @@ A power devig engine extracts fair probabilities from raw bookmaker odds across 
 
 This project is documented in three companion papers, written in sequence as the system was built and deployed.
 
-### Paper 1 — [Probability Redistribution in 3-Way Sports Betting Markets](probability_redistribution_paper.md)
+### Paper 1: [Probability Redistribution in 3-Way Sports Betting Markets](probability_redistribution_paper.md)
 
 The market theory paper. Establishes why NHL draw outcomes are structurally mispriced: probability mass conservation, bettor neglect, market illiquidity, and the inability of bookmakers relying on long-run averages to adapt to regime changes like the 2025-26 parity shift. Quantifies the mispricing across 7,142 games and 7 sportsbooks.
 
 > *"The draw acts as the residual absorber of probability mass that nobody is actively trading."*
 
-### Paper 2 — [A Bayesian-Calibrated Poisson Model for NHL 3-Way Regulation Markets](prediction_engine_paper.md)
+### Paper 2: [A Bayesian-Calibrated Poisson Model for NHL 3-Way Regulation Markets](prediction_engine_paper.md)
 
 The technical paper. Opens the black box: every feature, every hyperparameter, every formula in the production system. xG model (AUC 0.776), goalie deployment model, 13-quantile regulation model, Bayesian tie inflation, home-ice correction, power devigging, and staking methodology. Includes a worked end-to-end prediction example.
 
 > *"That paper establishes why draws are mispriced. This one documents how the model exploits it."*
 
-### Paper 3 — [Live Deployment Validation](live_deployment_paper.md)
+### Paper 3: [Live Deployment Validation](live_deployment_paper.md)
 
-The validation paper. First-month out-of-sample results: 143 games, 137 draw bets, +19.1% ROI. Includes a cross-bookmaker analysis showing sharp books (FanDuel: −15.6%) have tightened draw pricing while recreational and international books remain materially behind. Discusses model calibration, the OT rate regime continuation, and what the data says the model actually gets right — and wrong.
+The validation paper. First-month out-of-sample results: 143 games, 137 draw bets, +19.1% ROI. Includes a cross-bookmaker analysis showing sharp books (FanDuel: -15.6%) have tightened draw pricing while recreational and international books remain materially behind. Discusses model calibration, the OT rate regime continuation, and what the data says the model actually gets right and wrong.
 
 > *"The draw is still being neglected. The market has not closed the gap. The strategy works."*
 
@@ -101,7 +101,7 @@ The validation paper. First-month out-of-sample results: 143 games, 137 draw bet
 
 ## Key Methodology Points
 
-**Expected Goals**: Shot-level xG model trained on 2.4M+ play-by-play events. 12 features from shot geometry and game state — no shooter or goalie identity. Static model applied across all seasons.
+**Expected Goals**: Shot-level xG model trained on 2.4M+ play-by-play events. 12 features from shot geometry and game state, with no shooter or goalie identity. Static model applied across all seasons.
 
 **Goalie Deployment**: Ridge regression predicting GA residual from 13 context and quality features. Captures backup starters, fatigue, and consecutive-start fatigue. Output feeds the regulation model as `opp_goalie_ga_rate`.
 
@@ -109,9 +109,9 @@ The validation paper. First-month out-of-sample results: 143 games, 137 draw bet
 
 **Bayesian Tie Inflation**: Raw Poisson underestimates overtime probability by 5-7 percentage points. The Bayesian updater balances a historical prior (capped at 1,500 effective games) against current-season evidence, adapting within a season without overreacting to small samples.
 
-**Power Devigging**: Finds the exponent k such that p₁ᵏ + p₂ᵏ + p₃ᵏ = 1. Preferred over multiplicative or additive methods because it proportionally reduces vig on longshot outcomes — matching how bookmakers actually distribute their margin.
+**Power Devigging**: Finds the exponent k such that p₁ᵏ + p₂ᵏ + p₃ᵏ = 1. Preferred over multiplicative or additive methods because it proportionally reduces vig on longshot outcomes, matching how bookmakers actually distribute their margin.
 
-**Line Shopping**: The model computes edges against each bookmaker independently. The same game can clear the edge threshold at 4% on one book and miss entirely at another. Cross-bookmaker ROI shows a 35+ percentage point spread in this period — sharp books have adapted, soft books haven't.
+**Line Shopping**: The model computes edges against each bookmaker independently. The same game can clear the edge threshold at 4% on one book and miss entirely at another. Cross-bookmaker ROI shows a 35+ percentage point spread in this period; sharp books have adapted, soft books haven't.
 
 ---
 
@@ -155,7 +155,7 @@ python results_dashboard.py   # → http://127.0.0.1:8060
 
 ## Disclaimer
 
-This project is presented for analytical and portfolio purposes. Sports betting involves financial risk. Documented performance — whether from a backtest or live deployment — does not guarantee future results. The edge quantified here depends on market conditions, bookmaker pricing behavior, and the NHL's current overtime rate, all of which are subject to change.
+This project is presented for analytical and portfolio purposes. Sports betting involves financial risk. Documented performance, whether from a backtest or live deployment, does not guarantee future results. The edge quantified here depends on market conditions, bookmaker pricing behavior, and the NHL's current overtime rate, all of which are subject to change.
 
 ---
 
